@@ -10,8 +10,7 @@ export 'package:routerino/transitions.dart';
 /// The widget should use the implicit context declared in a separate widget.
 typedef SimpleWidgetBuilder<W extends Widget> = W Function();
 
-typedef SimpleWidgetPopsWithResultBuilder<T, W extends PopsWithResult<T>> = W
-    Function();
+typedef SimpleWidgetPopsWithResultBuilder<T, W extends PopsWithResult<T>> = W Function();
 
 mixin PopsWithResult<T> on Widget {
   void popWithResult(BuildContext context, T? result) {
@@ -34,57 +33,104 @@ class Routerino {
 
 extension RouterinoExt on BuildContext {
   /// Pushes a new route.
-  Future<T?> push<T, W extends Widget>(SimpleWidgetBuilder<W> builder,
-      {RouterinoTransition? transition}) {
-    return Navigator.push<T>(
-      this,
-      (transition ?? Routerino.transition).getRoute<T, W>(builder),
-    );
-  }
+  Future<T?> push<T, W extends Widget>(
+    SimpleWidgetBuilder<W> builder, {
+    RouterinoTransition? transition,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.push<T>(
+        this,
+        (transition ?? Routerino.transition).getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+      );
 
   /// Pushes a new route (no animation).
   Future<T?> pushImmediately<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return Navigator.push<T>(
-      this,
-      RouterinoTransition.noTransition.getRoute<T, W>(builder),
-    );
-  }
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.push<T>(
+        this,
+        RouterinoTransition.noTransition.getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+      );
 
   /// Pushes a new route while removing all others.
   Future<T?> pushRoot<T, W extends Widget>(
     SimpleWidgetBuilder<W> builder, {
     RouterinoTransition? transition,
-  }) {
-    return Navigator.pushAndRemoveUntil(
-      this,
-      (transition ?? Routerino.transition).getRoute<T, W>(builder),
-      (route) => false,
-    );
-  }
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        (transition ?? Routerino.transition).getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+        (route) => false,
+      );
 
   /// Pushes a new route while removing all others (no animation).
   Future<T?> pushRootImmediately<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return Navigator.pushAndRemoveUntil(
-      this,
-      RouterinoTransition.noTransition.getRoute<T, W>(builder),
-      (route) => false,
-    );
-  }
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        RouterinoTransition.noTransition.getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+        (route) => false,
+      );
 
   /// Pushes a new route and removes the current one after the transition.
   Future<T?> pushReplacement<T, W extends Widget>(
     SimpleWidgetBuilder<W> builder, {
     RouterinoTransition? transition,
-  }) {
-    return Navigator.pushReplacement<T, W>(
-      this,
-      (transition ?? Routerino.transition).getRoute<T, W>(builder),
-    );
-  }
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushReplacement<T, W>(
+        this,
+        (transition ?? Routerino.transition).getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+      );
 
   /// Pushes a new route expecting a typed result.
   ///
@@ -104,17 +150,24 @@ extension RouterinoExt on BuildContext {
     SimpleWidgetPopsWithResultBuilder<T, W> builder, {
     T? Function(dynamic result)? onWrongType,
     RouterinoTransition? transition,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
   }) async {
     final Object? result = await Navigator.push<T>(
       this,
-      (transition ?? Routerino.transition).getRoute<T, W>(() => builder()),
+      (transition ?? Routerino.transition).getRoute<T, W>(
+        () => builder(),
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      ),
     );
 
-    if (result is T?) {
-      return result; // got expected result type
-    } else {
-      return onWrongType?.call(result); // type does not match
-    }
+    if (result is T?) return result; // got expected result type
+    return onWrongType?.call(result); // type does not match
   }
 
   /// Pushes a new route and removes until the specified type.
@@ -122,50 +175,86 @@ extension RouterinoExt on BuildContext {
     required Type removeUntil,
     required SimpleWidgetBuilder<W> builder,
     RouterinoTransition? transition,
-  }) {
-    return Navigator.pushAndRemoveUntil(
-      this,
-      (transition ?? Routerino.transition).getRoute<T, W>(builder),
-      (route) => route.settings.name == removeUntil.toString(),
-    );
-  }
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        (transition ?? Routerino.transition).getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+        (route) => route.settings.name == removeUntil.toString(),
+      );
 
   /// Pushes a new route and removes until the specified type.
   Future<T?> pushAndRemoveUntilImmediately<T, W extends Widget>({
     required Type removeUntil,
     required SimpleWidgetBuilder<W> builder,
-  }) {
-    return Navigator.pushAndRemoveUntil(
-      this,
-      RouterinoTransition.noTransition.getRoute<T, W>(builder),
-      (route) => route.settings.name == removeUntil.toString(),
-    );
-  }
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        RouterinoTransition.noTransition.getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+        (route) => route.settings.name == removeUntil.toString(),
+      );
 
   /// Pushes a new route and removes until predicate.
   Future<T?> pushAndRemoveUntilPredicate<T, W extends Widget>({
     required RoutePredicate removeUntil,
     required SimpleWidgetBuilder<W> builder,
     RouterinoTransition? transition,
-  }) {
-    return Navigator.pushAndRemoveUntil(
-      this,
-      (transition ?? Routerino.transition).getRoute<T, W>(builder),
-      removeUntil,
-    );
-  }
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        (transition ?? Routerino.transition).getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+        removeUntil,
+      );
 
   /// Pushes a new route and removes until predicate (no animation).
   Future<T?> pushAndRemoveUntilPredicateImmediately<T, W extends Widget>({
     required RoutePredicate removeUntil,
     required SimpleWidgetBuilder<W> builder,
-  }) {
-    return Navigator.pushAndRemoveUntil(
-      this,
-      RouterinoTransition.noTransition.getRoute<T, W>(builder),
-      removeUntil,
-    );
-  }
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      Navigator.pushAndRemoveUntil(
+        this,
+        RouterinoTransition.noTransition.getRoute<T, W>(
+          builder,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        ),
+        removeUntil,
+      );
 
   /// Pushes a widget sliding from the bottom.
   /// You can use [RouterinoBottomSheet] to quickly bootstrap a widget.

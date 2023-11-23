@@ -8,8 +8,12 @@ abstract class RouterinoTransition {
 
   /// Returns the typed route.
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  );
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  });
 
   /// Default flutter transition, it uses cupertino on iOS
   static const material = RouterinoMaterialTransition();
@@ -69,13 +73,20 @@ class RouterinoMaterialTransition extends RouterinoTransition {
 
   @override
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return MaterialPageRoute(
-      builder: (_) => builder(),
-      settings: RouteSettings(name: W.toString()),
-    );
-  }
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      MaterialPageRoute(
+        builder: (_) => builder(),
+        settings: RouteSettings(name: W.toString()),
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      );
 }
 
 /// iOS transition (slide to left)
@@ -84,13 +95,20 @@ class RouterinoCupertinoTransition extends RouterinoTransition {
 
   @override
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return CupertinoPageRoute(
-      builder: (_) => builder(),
-      settings: RouteSettings(name: W.toString()),
-    );
-  }
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      CupertinoPageRoute(
+        builder: (_) => builder(),
+        settings: RouteSettings(name: W.toString()),
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      );
 }
 
 /// No transition
@@ -99,15 +117,22 @@ class RouterinoNoTransition extends RouterinoTransition {
 
   @override
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return PageRouteBuilder(
-      pageBuilder: (context, a1, a2) => builder(),
-      settings: RouteSettings(name: W.toString()),
-      transitionDuration: Duration.zero,
-      reverseTransitionDuration: Duration.zero,
-    );
-  }
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      PageRouteBuilder(
+        pageBuilder: (context, a1, a2) => builder(),
+        settings: RouteSettings(name: W.toString()),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      );
 }
 
 /// Fade transition
@@ -118,20 +143,27 @@ class RouterinoFadeTransition extends RouterinoTransition {
 
   @override
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return PageRouteBuilder(
-      pageBuilder: (context, a1, a2) {
-        return FadeTransition(
-          opacity: a1,
-          child: builder(),
-        );
-      },
-      settings: RouteSettings(name: W.toString()),
-      transitionDuration: duration,
-      reverseTransitionDuration: duration,
-    );
-  }
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      PageRouteBuilder(
+        pageBuilder: (context, a1, a2) {
+          return FadeTransition(
+            opacity: a1,
+            child: builder(),
+          );
+        },
+        settings: RouteSettings(name: W.toString()),
+        transitionDuration: duration,
+        reverseTransitionDuration: duration,
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      );
 }
 
 enum SlideDirection {
@@ -155,12 +187,15 @@ class RouterinoSlideTransition extends RouterinoTransition {
 
   @override
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return PageRouteBuilder(
-      pageBuilder: (context, a1, a2) => builder(),
-      transitionsBuilder: (context, a1, a2, child) {
-        return SlideTransition(
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      PageRouteBuilder(
+        pageBuilder: (context, a1, a2) => builder(),
+        transitionsBuilder: (context, a1, a2, child) => SlideTransition(
           position: Tween<Offset>(
             begin: switch (direction) {
               SlideDirection.rightToLeft => const Offset(1.0, 0.0),
@@ -176,13 +211,15 @@ class RouterinoSlideTransition extends RouterinoTransition {
             ),
           ),
           child: child,
-        );
-      },
-      settings: RouteSettings(name: W.toString()),
-      transitionDuration: duration,
-      reverseTransitionDuration: duration,
-    );
-  }
+        ),
+        settings: RouteSettings(name: W.toString()),
+        transitionDuration: duration,
+        reverseTransitionDuration: duration,
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      );
 }
 
 /// Slide transition
@@ -202,53 +239,56 @@ class RouterinoSlideJoinedTransition extends RouterinoTransition {
 
   @override
   PageRoute<T> getRoute<T, W extends Widget>(
-    SimpleWidgetBuilder<W> builder,
-  ) {
-    return PageRouteBuilder(
-      pageBuilder: (context, a1, a2) => builder(),
-      transitionsBuilder: (context, a1, a2, child) {
-        return Stack(
-          children: [
-            SlideTransition(
-              position: Tween<Offset>(
-                      begin: const Offset(0.0, 0.0),
-                      end: switch (direction) {
-                        SlideDirection.rightToLeft => const Offset(-1.0, 0.0),
-                        SlideDirection.leftToRight => const Offset(1.0, 0.0),
-                        SlideDirection.topToBottom => const Offset(0.0, 1.0),
-                        SlideDirection.bottomToTop => const Offset(0.0, -1.0),
-                      })
-                  .animate(
-                CurvedAnimation(
-                  parent: a1,
-                  curve: curve,
-                ),
+    SimpleWidgetBuilder<W> builder, {
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) =>
+      PageRouteBuilder(
+        pageBuilder: (context, a1, a2) => builder(),
+        transitionsBuilder: (context, a1, a2, child) => Stack(children: [
+          SlideTransition(
+            position: Tween<Offset>(
+                    begin: const Offset(0.0, 0.0),
+                    end: switch (direction) {
+                      SlideDirection.rightToLeft => const Offset(-1.0, 0.0),
+                      SlideDirection.leftToRight => const Offset(1.0, 0.0),
+                      SlideDirection.topToBottom => const Offset(0.0, 1.0),
+                      SlideDirection.bottomToTop => const Offset(0.0, -1.0),
+                    })
+                .animate(
+              CurvedAnimation(
+                parent: a1,
+                curve: curve,
               ),
-              child: currentPage,
             ),
-            SlideTransition(
-              position: Tween<Offset>(
-                begin: switch (direction) {
-                  SlideDirection.rightToLeft => const Offset(1.0, 0.0),
-                  SlideDirection.leftToRight => const Offset(-1.0, 0.0),
-                  SlideDirection.topToBottom => const Offset(0.0, -1.0),
-                  SlideDirection.bottomToTop => const Offset(0.0, 1.0),
-                },
-                end: Offset.zero,
-              ).animate(
-                CurvedAnimation(
-                  parent: a1,
-                  curve: curve,
-                ),
+            child: currentPage,
+          ),
+          SlideTransition(
+            position: Tween<Offset>(
+              begin: switch (direction) {
+                SlideDirection.rightToLeft => const Offset(1.0, 0.0),
+                SlideDirection.leftToRight => const Offset(-1.0, 0.0),
+                SlideDirection.topToBottom => const Offset(0.0, -1.0),
+                SlideDirection.bottomToTop => const Offset(0.0, 1.0),
+              },
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(
+                parent: a1,
+                curve: curve,
               ),
-              child: child,
-            )
-          ],
-        );
-      },
-      settings: RouteSettings(name: W.toString()),
-      transitionDuration: duration,
-      reverseTransitionDuration: duration,
-    );
-  }
+            ),
+            child: child,
+          )
+        ]),
+        settings: RouteSettings(name: W.toString()),
+        transitionDuration: duration,
+        reverseTransitionDuration: duration,
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        allowSnapshotting: allowSnapshotting,
+        barrierDismissible: barrierDismissible,
+      );
 }

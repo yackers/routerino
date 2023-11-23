@@ -59,6 +59,21 @@ context.push(() => LoginPage());
 // push a route
 context.push(() => MyPage());
 
+//push a route with additional parameters
+//Available parameters: 
+// fullscreenDialog, 
+// maintainState, 
+// allowSnapshotting, 
+// barrierDismissible
+context.push(
+  () => MyPage(), 
+  maintainState: true,
+  fullscreenDialog: false,
+  allowSnapshotting: true,
+  barrierDismissible: false,
+);
+
+
 // push a route (no animation)
 context.pushImmediately(() => MyPage());
 
