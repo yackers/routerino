@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:routerino/routerino.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,13 +15,15 @@ class MyApp extends StatelessWidget {
       navigatorKey: Routerino.navigatorKey,
       navigatorObservers: [RouterinoObserver()],
       home: RouterinoHome(
-        builder: () => HomePage(),
+        builder: () => const HomePage(),
       ),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,26 +34,26 @@ class HomePage extends StatelessWidget {
             const Text('Home Page'),
             ElevatedButton(
               onPressed: () {
-                context.push(() => LoginPage());
+                context.push(() => const LoginPage());
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             ElevatedButton(
               onPressed: () async {
-                final result = await context.pushWithResult<int, PickNumberPage>(() => PickNumberPage());
+                final result = await context.pushWithResult<int, PickNumberPage>(() => const PickNumberPage());
                 print('RESULT: $result (${result.runtimeType})');
               },
-              child: Text('Pick a number'),
+              child: const Text('Pick a number'),
             ),
             ElevatedButton(
               onPressed: () {
-                context.push(() => RemoveBeneathTest());
+                context.push(() => const RemoveBeneathTest());
               },
-              child: Text('Remove beneath'),
+              child: const Text('Remove beneath'),
             ),
             ElevatedButton(
               onPressed: () {
-                context.pushBottomSheet(() => RouterinoBottomSheet(
+                context.pushBottomSheet(() => const RouterinoBottomSheet(
                       title: 'My Title',
                       backgroundColor: Colors.green,
                       child: Column(
@@ -61,7 +65,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ));
               },
-              child: Text('Open Bottom Sheet'),
+              child: const Text('Open Bottom Sheet'),
             ),
           ],
         ),
@@ -71,6 +75,8 @@ class HomePage extends StatelessWidget {
 }
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,13 +91,13 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   context.popUntil(HomePage);
                 },
-                child: Text('Back to home page'),
+                child: const Text('Back to home page'),
               ),
               ElevatedButton(
                 onPressed: () {
-                  context.push(() => RegisterPage(), transition: RouterinoTransition.fade());
+                  context.push(() => const RegisterPage(), transition: RouterinoTransition.fade());
                 },
-                child: Text('Register'),
+                child: const Text('Register'),
               ),
             ],
           ),
@@ -102,6 +108,8 @@ class LoginPage extends StatelessWidget {
 }
 
 class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +122,7 @@ class RegisterPage extends StatelessWidget {
               onPressed: () {
                 context.popUntilRoot();
               },
-              child: Text('Back to home page'),
+              child: const Text('Back to home page'),
             ),
           ],
         ),
@@ -124,7 +132,7 @@ class RegisterPage extends StatelessWidget {
 }
 
 class PickNumberPage extends StatelessWidget with PopsWithResult<int> {
-  const PickNumberPage({Key? key}) : super(key: key);
+  const PickNumberPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,13 +143,13 @@ class PickNumberPage extends StatelessWidget with PopsWithResult<int> {
             onPressed: () {
               popWithResult(context, 1);
             },
-            child: Text('Pick 1'),
+            child: const Text('Pick 1'),
           ),
           ElevatedButton(
             onPressed: () {
               popWithResult(context, 2);
             },
-            child: Text('Pick 2'),
+            child: const Text('Pick 2'),
           ),
         ],
       ),
@@ -160,9 +168,9 @@ class RemoveBeneathTest extends StatelessWidget {
           const Text('Remove Beneath: A'),
           ElevatedButton(
             onPressed: () {
-              context.push(() => RemoveBeneathTest2());
+              context.push(() => const RemoveBeneathTest2());
             },
-            child: Text('Next'),
+            child: const Text('Next'),
           ),
         ],
       ),
@@ -183,13 +191,13 @@ class RemoveBeneathTest2 extends StatelessWidget {
             onPressed: () {
               context.removeRoute(RemoveBeneathTest);
             },
-            child: Text('Remove A'),
+            child: const Text('Remove A'),
           ),
           ElevatedButton(
             onPressed: () {
               context.pop();
             },
-            child: Text('Pop'),
+            child: const Text('Pop'),
           ),
         ],
       ),

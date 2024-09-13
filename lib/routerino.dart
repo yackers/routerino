@@ -333,8 +333,8 @@ class RouterinoBottomSheet extends StatelessWidget {
     this.borderRadius = 10,
     this.maxWidth = 550,
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
